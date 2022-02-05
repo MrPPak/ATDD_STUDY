@@ -1,7 +1,10 @@
 package nextstep.subway.common.handler;
 
+import nextstep.auth.authentication.InvalidPasswordException;
+import nextstep.auth.authentication.NotExistEmailException;
 import nextstep.subway.common.exception.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,7 +19,11 @@ public class ControllerExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ExceptionResponse> badRequestExceptionHandler(BadRequestException e) {
-        e.printStackTrace();
-        return ResponseEntity.badRequest().body(new ExceptionResponse(e.getMessage()));
+        return ResponseEntity.badRequest().body(ExceptionResponse.of(e.getMessage()));
+    }
+
+    @ExceptionHandler(value = {NotExistEmailException.class, InvalidPasswordException.class})
+    public ResponseEntity<ExceptionResponse> authExceptionHandler(RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ExceptionResponse.of(e.getMessage()));
     }
 }

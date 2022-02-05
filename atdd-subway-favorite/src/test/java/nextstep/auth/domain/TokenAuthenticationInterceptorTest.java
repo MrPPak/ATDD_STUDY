@@ -2,6 +2,7 @@ package nextstep.auth.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nextstep.auth.authentication.AuthenticationToken;
+import nextstep.auth.authentication.InvalidPasswordException;
 import nextstep.auth.authentication.TokenAuthenticationInterceptor;
 import nextstep.auth.context.Authentication;
 import nextstep.auth.token.JwtTokenProvider;
@@ -25,13 +26,17 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TokenAuthenticationInterceptorTest {
     private static final String EMAIL = "email@email.com";
+    private static final String WRONG_EMAIL = "wrongemail@email.com";
     private static final String PASSWORD = "password";
+    private static final String WRONG_PASSWORD = "wrongpassword";
+    private static final int AGE = 20;
     public static final String JWT_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIiLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE1MTYyMzkwMjJ9.ih1aovtQShabQ7l0cINw4k1fagApg3qLWiB8Kt59Lno";
 
     @Mock
@@ -70,6 +75,18 @@ class TokenAuthenticationInterceptorTest {
 
         // then
         assertThat(authenticate.getPrincipal()).isNotNull();
+    }
+
+    @Test
+    void authenticateInvalidPassword() {
+        // given
+        when(userDetailsService.loadUserByUsername(EMAIL)).thenReturn(new LoginMember(1L, EMAIL, PASSWORD, AGE));
+        AuthenticationToken authenticationToken = new AuthenticationToken(EMAIL, WRONG_PASSWORD);
+
+        // when, then
+        assertThatThrownBy(() ->
+                interceptor.authenticate(authenticationToken))
+                .isInstanceOf(InvalidPasswordException.class);
     }
 
     @Test
