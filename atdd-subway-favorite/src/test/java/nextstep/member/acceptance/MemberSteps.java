@@ -147,4 +147,5 @@ public class MemberSteps {
                 .then().log().all()
                 .extract();
     }
+
 }

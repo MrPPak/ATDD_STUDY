@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ControllerExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Void> handleIllegalArgsException(DataIntegrityViolationException e) {
-        e.printStackTrace();
         return ResponseEntity.badRequest().build();
     }
 

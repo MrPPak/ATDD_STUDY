@@ -20,14 +20,6 @@ public class AuthConfig implements WebMvcConfigurer {
     private JwtTokenProvider jwtTokenProvider;
     private ObjectMapper objectMapper;
 
-    public AuthConfig(CustomUserDetailsService userDetailsService,
-                      JwtTokenProvider jwtTokenProvider,
-                      ObjectMapper objectMapper) {
-        this.userDetailsService = userDetailsService;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.objectMapper = objectMapper;
-    }
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new SessionAuthenticationInterceptor(userDetailsService)).addPathPatterns("/login/session");
