@@ -1,5 +1,11 @@
 package nextstep.subway.common.handler;
 
+<<<<<<< Updated upstream
+=======
+import nextstep.subway.auth.exception.AuthorizeException;
+import nextstep.subway.auth.exception.InvalidPasswordException;
+import nextstep.subway.auth.exception.NotExistEmailException;
+>>>>>>> Stashed changes
 import nextstep.subway.common.exception.BadRequestException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +14,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponse> exceptionHandler(Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.badRequest().body(ExceptionResponse.of(e.getMessage()));
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Void> handleIllegalArgsException(DataIntegrityViolationException e) {
         e.printStackTrace();
@@ -19,4 +32,12 @@ public class ControllerExceptionHandler {
         e.printStackTrace();
         return ResponseEntity.badRequest().body(ExceptionResponse.of(e.getMessage()));
     }
+<<<<<<< Updated upstream
+=======
+
+    @ExceptionHandler({AuthorizeException.class, NotExistEmailException.class, InvalidPasswordException.class})
+    public ResponseEntity<ExceptionResponse> authorizeExceptionHandler(RuntimeException e) {
+        return new ResponseEntity<>(ExceptionResponse.of(e.getMessage()), HttpStatus.UNAUTHORIZED);
+    }
+>>>>>>> Stashed changes
 }
