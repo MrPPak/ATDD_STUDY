@@ -1,23 +1,13 @@
 package nextstep.subway.path.acceptance;
 
-import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import nextstep.subway.common.AcceptanceTest;
-import nextstep.subway.line.acceptance.LineSteps;
 import nextstep.subway.path.domain.PathType;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.http.MediaType;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Stream;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import static nextstep.subway.line.acceptance.LineSteps.지하철_노선에_지하철_구간_생성_요청;
 import static nextstep.subway.path.acceptance.PathUtils.*;
@@ -67,7 +57,7 @@ class PathAcceptanceTest extends AcceptanceTest {
         저도 이 내용에 동의하는데 리뷰어님은 인수테스트코드가 통과된 뒤 다음으로 넘어가시는지 의견을 묻고 싶습니다 :)
      */
     @ParameterizedTest(name = "두 역의 경로를 조회한다. [{arguments}]")
-    @MethodSource("providePathType")
+    @EnumSource(PathType.class)
     void findPath(PathType type) {
         // when
         ExtractableResponse<Response> response = 두_역의_경로_조회를_요청(교대역, 양재역, type);
@@ -83,12 +73,5 @@ class PathAcceptanceTest extends AcceptanceTest {
             여러 검증이 필요한 경우 assertAll을 사용하라고 추천했습니다.
             제가 생각하기에는 assertAll을 써도 검증하는 것이 3개인데 차이점이 궁금합니다 :)
          */
-    }
-
-    private static Stream<Arguments> providePathType() {
-        return Stream.of(
-                Arguments.of(PathType.DISTANCE),
-                Arguments.of(PathType.DURATION)
-        );
     }
 }
