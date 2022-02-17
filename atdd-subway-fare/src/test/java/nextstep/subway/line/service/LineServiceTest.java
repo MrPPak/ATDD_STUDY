@@ -42,22 +42,22 @@ class LineServiceTest {
 
         // then
         Line line = lineService.findById(이호선.getId());
-        List<Section> sections = line.getSections();
-        Section section = sections.stream()
+        List<Section> result = line.getSections();
+        Section section = result.stream()
                 .filter(it -> it.getUpStation() == 역삼역)
                 .findFirst()
                 .orElseThrow(RuntimeException::new);
 
         assertAll(() -> {
-            assertThat(sections.size()).isEqualTo(2);
+            assertThat(result.size()).isEqualTo(2);
             assertThat(section.getDistance()).isEqualTo(6);
             assertThat(section.getDuration()).isEqualTo(6);
         });
     }
 
-    private Line createLine(Station 강남역, Station 역삼역) {
+    private Line createLine(Station 강남역, Station 삼성역) {
         Line line = new Line("2호선", "green");
-        line.addSection(강남역, 역삼역, 10, 10);
+        line.addSection(강남역, 삼성역, 10, 10);
         return line;
     }
 }

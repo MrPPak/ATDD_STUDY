@@ -1,9 +1,6 @@
 package nextstep.subway.line.domain;
 
-import nextstep.subway.line.domain.Line;
-import nextstep.subway.line.domain.Section;
 import nextstep.subway.station.domain.Station;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,10 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-/**
- *  중복 코드를 최대한 제거해줘야
- *  나중에 기능이 변경되더라도 최소한의 노력으로 테스트 코드를 수정할 수 있다.
- */
 class LineTest {
     Station 강남역;
     Station 역삼역;
@@ -67,16 +60,21 @@ class LineTest {
     @DisplayName("하행 기준으로 목록 중간에 추가할 경우")
     @Test
     void addSectionInMiddle2() {
+        // when
         이호선_구간_추가(강남역, 역삼역, 10);
-        이호선_구간_추가(삼성역, 역삼역, 5);
+        이호선_구간_추가(삼성역, 역삼역, 4);
 
+        // then
         Section section = 이호선.getSections().stream()
                 .filter(it -> it.getUpStation() == 강남역)
                 .findFirst().orElseThrow(RuntimeException::new);
 
-        assertThat(이호선.getSections().size()).isEqualTo(2);
-        assertThat(section.getDownStation()).isEqualTo(삼성역);
-        assertThat(section.getDistance()).isEqualTo(5);
+        assertAll(() -> {
+            assertThat(이호선.getSections().size()).isEqualTo(2);
+            assertThat(section.getDownStation()).isEqualTo(삼성역);
+            assertThat(section.getDistance()).isEqualTo(6);
+            assertThat(section.getDuration()).isEqualTo(6);
+        });
     }
 
     @DisplayName("목록 앞에 추가할 경우")
@@ -88,14 +86,14 @@ class LineTest {
 
         // then
         Section section = 이호선.getSections().stream()
-                .filter(it -> it.getUpStation() == 삼성역)
+                .filter(it -> it.getUpStation() == 강남역)
                 .findFirst().orElseThrow(RuntimeException::new);
 
         assertAll(() -> {
             assertThat(이호선.getSections().size()).isEqualTo(2);
-            assertThat(section.getDownStation()).isEqualTo(강남역);
-            assertThat(section.getDistance()).isEqualTo(5);
-            assertThat(section.getDuration()).isEqualTo(5);
+            assertThat(section.getDownStation()).isEqualTo(역삼역);
+            assertThat(section.getDistance()).isEqualTo(10);
+            assertThat(section.getDuration()).isEqualTo(10);
         });
     }
 
@@ -139,8 +137,7 @@ class LineTest {
         이호선_구간_추가(강남역, 역삼역, 10);
 
         // when, then
-        assertThatThrownBy(() ->
-                이호선_구간_추가(강남역, 역삼역, 5))
+        assertThatThrownBy(() -> 이호선.addSection(강남역, 역삼역, 5, 5))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -196,17 +193,14 @@ class LineTest {
     @DisplayName("구간이 하나인 노선에서 역 삭제 시 에러 발생")
     @Test
     void removeSectionNotEndOfList() {
+        // given
         이호선_구간_추가(강남역, 역삼역, 10);
 
+        // when, then
         assertThatThrownBy(() -> 이호선.deleteSection(역삼역))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    /*
-        이렇게 중복되는 코드들을 하나의 메소드로 분리함으로서 얻는 장점은
-        만약 이렇게 안했다면 addSection 로직이 바뀌면 바꿔줘야 하는 코드수만 28줄이 넘었다 ㄷㄷ
-        그런데 이렇게 하나의 메소드만 분리한다면 (유연하게 분리했다면) 이 하나의 메소드만 고치면 된다.
-     */
     private void 이호선_구간_추가(Station upStation, Station downStation, int value) {
         이호선.addSection(upStation, downStation, value, value);
     }

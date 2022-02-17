@@ -95,13 +95,11 @@ public class Sections {
                 .ifPresent(it -> {
                     // 신규 구간의 상행역과 기존 구간의 상행역에 대한 구간을 추가한다.
                     sections.add(
-                            new Section(
-                                    section.getLine(),
+                            new Section(section.getLine(),
                                     it.getUpStation(),
                                     section.getUpStation(),
                                     it.getDistance() - section.getDistance(),
-                                    it.getDuration() - section.getDuration()
-                            )
+                                    it.getDuration() - section.getDuration())
                     );
                     sections.remove(it);
                 });
@@ -114,13 +112,11 @@ public class Sections {
                 .ifPresent(it -> {
                     // 신규 구간의 하행역과 기존 구간의 하행역에 대한 구간을 추가한다.
                     sections.add(
-                            new Section(
-                                    section.getLine(),
-                                    section.getDownStation(),
-                                    it.getDownStation(),
-                                    it.getDistance() - section.getDistance(),
-                                    it.getDuration() - section.getDuration()
-                            )
+                            new Section(section.getLine(),
+                                        section.getDownStation(),
+                                        it.getDownStation(),
+                                 it.getDistance() - section.getDistance(),
+                                 it.getDuration() - section.getDuration())
                     );
                     sections.remove(it);
                 });
@@ -167,6 +163,14 @@ public class Sections {
     }
 
     public int totalDistance() {
-        return sections.stream().mapToInt(Section::getDistance).sum();
+        return sections.stream()
+                .mapToInt(Section::getDistance)
+                .sum();
+    }
+
+    public int totalDuration() {
+        return sections.stream()
+                .mapToInt(Section::getDuration)
+                .sum();
     }
 }

@@ -18,4 +18,5 @@ public class SectionRequest {
         this.distance = distance;
         this.duration = duration;
     }
+
 }
